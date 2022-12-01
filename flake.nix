@@ -3,9 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
+    nickel.url = "github:tweag/nickel";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nickel }:
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
@@ -14,7 +15,7 @@
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
       devShell.x86_64-linux = pkgs.mkShell {
-        buildInputs = with pkgs; [ nickel ];
+        buildInputs = [ nickel.packages.x86_64-linux.default ];
       };
     };
 }
