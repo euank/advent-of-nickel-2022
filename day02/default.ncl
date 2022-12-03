@@ -14,7 +14,6 @@ let p1 = input |>
         else 0
       )
     ) 0
-
 in
 
 let p2 = input |>
