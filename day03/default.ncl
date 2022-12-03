@@ -1,8 +1,6 @@
-let
-  input = import "./input.ncl" in
+let lib = import "../lib.ncl" in
+let input = import "./input.ncl" in
 
-let
-  cmp = fun l r => if l < r then `Lesser else `Greater in
 let rec
   dedupeSorted = fun arr => if (array.length arr) <= 1 then arr
   else let h = array.head arr in let t = array.tail arr in
@@ -34,7 +32,7 @@ let
   array.map (fun s => { L = (string.substring 0 ((string.length s) / 2) s), R = (string.substring ((string.length s) / 2) (string.length s) s) }) |>
   array.map (fun el => { L = (string.chars el.L), R = (string.chars el.R) }) |>
   array.map (fun el => { L = array.map toPrio el.L, R = array.map toPrio el.R }) |>
-  array.map (fun el => { L = array.sort cmp el.L, R = array.sort cmp el.R }) |>
+  array.map (fun el => { L = array.sort lib.num.cmp el.L, R = array.sort lib.num.cmp el.R }) |>
   array.map (fun el => { L = dedupeSorted el.L, R = dedupeSorted el.R })
 in
 let
@@ -56,7 +54,7 @@ part2Count = input |>
   string.split "\n" |>
   array.map string.chars |>
   array.map (array.map toPrio) |>
-  array.map (array.sort cmp) |>
+  array.map (array.sort lib.num.cmp) |>
   array.map dedupeSorted |>
   chunkArr 3 |>
   array.map (fun a => commonEl (array.elem_at 0 a) (array.elem_at 1 a) (array.elem_at 2 a)) |>
