@@ -15,7 +15,10 @@ in
       = fun n arr => if n == 0 then arr else drop (n - 1) (stdarr.tail arr),
 
     chunk : forall a. Num -> Array a -> Array (Array a) | doc "chunk an array into arrays of size n"
-      = fun n arr => if (stdarr.length arr) <= n then [ arr ] else [(take n arr)] @ (chunk n (drop n arr))
+      = fun n arr => if (stdarr.length arr) <= n then [ arr ] else [(take n arr)] @ (chunk n (drop n arr)),
+
+    sum : forall a. (a -> a -> a) -> Array a -> a | doc "apply a binary operation to an array"
+      = fun f arr => stdarr.foldl f (stdarr.head arr) (stdarr.tail arr)
   },
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"

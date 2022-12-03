@@ -52,9 +52,9 @@ part2Count = input |>
   array.map dedupeSorted |>
   lib.array.chunk 3 |>
   array.map (fun a => commonEl (array.elem_at 0 a) (array.elem_at 1 a) (array.elem_at 2 a)) |>
-  array.foldl (fun x y => x + y) 0
+  lib.array.sum (+)
 in
 {
-  part1 = array.foldl (fun acc l => acc + l) 0 counts,
+  part1 = lib.array.sum (+) counts,
   part2 = part2Count
 }
