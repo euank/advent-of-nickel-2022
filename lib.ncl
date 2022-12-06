@@ -18,7 +18,16 @@ in
       = fun n arr => if (stdarr.length arr) <= n then [ arr ] else [(take n arr)] @ (chunk n (drop n arr)),
 
     sum : forall a. (a -> a -> a) -> Array a -> a | doc "apply a binary operation to an array"
-      = fun f arr => stdarr.foldl f (stdarr.head arr) (stdarr.tail arr)
+      = fun f arr => stdarr.foldl f (stdarr.head arr) (stdarr.tail arr),
+
+    last : forall a. Array a -> a | doc "last element of an array"
+      = fun arr => stdarr.elem_at ((stdarr.length arr) - 1) arr,
+
+    set : forall a. Num -> a -> Array a -> Array a | doc "return a new array with the nth element replaced with the given value"
+      = fun n val arr => (take n arr) @ [ val ] @ (drop (n + 1) arr),
+
+    singleton : forall a. a -> Array a | doc "create an array with a single element"
+      = fun a => [a]
   },
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"
