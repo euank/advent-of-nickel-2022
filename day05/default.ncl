@@ -38,6 +38,16 @@ let rec applyMove = fun stack move =>
     else applyMove updatedStack (record.update "count" (move.count - 1) move)
 in
 let stackTops = fun stacks => array.map array.head stacks |> string.join "" in
+
+# part2
+let rec applyMove2 = fun stack move =>
+    let fromCol = array.elem_at (move.from - 1) stack in
+    let toCol = array.elem_at (move.to - 1) stack in
+    stack |>
+      lib.array.set (move.to - 1) ((lib.array.take move.count fromCol) @ toCol) |>
+      lib.array.set (move.from - 1) (lib.array.drop move.count fromCol)
+in
 {
-  part1 = (array.foldl applyMove stacks moves) |> stackTops
+  part1 = (array.foldl applyMove stacks moves) |> stackTops,
+  part2 = (array.foldl applyMove2 stacks moves) |> stackTops
 }
