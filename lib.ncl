@@ -1,8 +1,7 @@
 # nickel functions that seemed generic enough to be useful outside of a single day
 # Some may only be used in a single day, but each one felt at least generic
-let
-  stdarr = array
-in
+let stdarr = array in
+let stdstr = string in
 {
   array = {
     cmpRev : (forall a. (a -> a -> [| `Lesser, `Equal, `Greater |]) -> (a -> a -> [| `Lesser, `Equal, `Greater |]))
@@ -32,5 +31,11 @@ in
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"
       = fun l r => if l < r then `Lesser else `Greater
-  }
+  },
+  string = {
+    starts_with : Str -> Str -> Bool
+      = fun prefix str =>
+          if (stdstr.length prefix) > (stdstr.length str) then false
+          else (stdstr.substring 0 (stdstr.length prefix) str) == prefix,
+  },
 }
