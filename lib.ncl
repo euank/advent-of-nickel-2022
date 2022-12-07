@@ -2,6 +2,7 @@
 # Some may only be used in a single day, but each one felt at least generic
 let stdarr = array in
 let stdstr = string in
+let stdrec = record in
 {
   array = {
     cmpRev : (forall a. (a -> a -> [| `Lesser, `Equal, `Greater |]) -> (a -> a -> [| `Lesser, `Equal, `Greater |]))
@@ -38,4 +39,12 @@ let stdstr = string in
           if (stdstr.length prefix) > (stdstr.length str) then false
           else (stdstr.substring 0 (stdstr.length prefix) str) == prefix,
   },
+
+  record = {
+    # Adding the below type causes a type error, even though it seems like it should be right :(
+    # filter : forall a. (Str -> a -> Bool) -> {_: a} -> {_: a}
+    filter = fun f r =>
+      stdarr.foldl (fun out k => let v = r."%{k}" in if f k v then stdrec.insert k v out else out) {} (stdrec.fields r),
+  },
+
 }
