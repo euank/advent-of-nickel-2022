@@ -42,10 +42,9 @@ let part2Answer = fun dirSizes =>
   let unusedSpace = 70000000 - curSize in
   let neededSpace = 30000000 - unusedSpace in
   let validSizes = array.filter (fun v => v >= neededSpace) (record.values dirSizes) in
-  let best = array.head (array.sort lib.num.cmp validSizes) in
-  best
+  array.head (array.sort lib.num.cmp validSizes)
 in
 {
-  #  part1 = part1Answer dirSizes,
+  part1 = part1Answer dirSizes,
   part2 = part2Answer dirSizes,
 }
