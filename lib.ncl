@@ -47,4 +47,23 @@ let stdrec = record in
       stdarr.foldl (fun out k => let v = r."%{k}" in if f k v then stdrec.insert k v out else out) {} (stdrec.fields r),
   },
 
+  array2 = {
+    # Get gets an element in a 2d arr, for example:
+    # [ [ 1, 2, 3],
+    #   [ 4, 5, 6],
+    #   [ 7, 8, 9] ]
+    # get 1 2 = 8
+    # get 0 0 = 2
+    get : forall a. Num -> Num -> Array (Array a) -> a
+      = fun x y arr2 => arr2 |> stdarr.elem_at y |> stdarr.elem_at x,
+
+    # rotateLeft : forall a. Array (Array a) -> Array (Array a)
+    rotateRight = fun arr2 =>
+        let h = stdarr.length arr2 in
+        let w = stdarr.length (stdarr.head arr2) in
+        stdarr.generate (fun x => stdarr.generate (fun y => array2.get x (h - y - 1) arr2) h) w,
+
+    rotateLeft = fun arr2 => arr2 |> rotateRight |> rotateRight |> rotateRight,
+  },
+
 }
