@@ -57,13 +57,29 @@ let stdrec = record in
     get : forall a. Num -> Num -> Array (Array a) -> a
       = fun x y arr2 => arr2 |> stdarr.elem_at y |> stdarr.elem_at x,
 
-    # rotateLeft : forall a. Array (Array a) -> Array (Array a)
+    # Rotate a 2d arr right. For example:
+    # rotateRight [ [1, 2],
+    #               [3, 4],
+    #               [5, 6] ] =
+    #             [ [5, 3, 1],
+    #               [6, 4, 2] ]
+    # rotateRight : forall a. Array (Array a) -> Array (Array a)
     rotateRight = fun arr2 =>
         let h = stdarr.length arr2 in
         let w = stdarr.length (stdarr.head arr2) in
         stdarr.generate (fun x => stdarr.generate (fun y => array2.get x (h - y - 1) arr2) h) w,
 
-    rotateLeft = fun arr2 => arr2 |> rotateRight |> rotateRight |> rotateRight,
+    # Rotate a 2d arr left. For example:
+    # rotateLeft  [ [1, 2],
+    #               [3, 4],
+    #               [5, 6] ] =
+    #             [ [2, 4, 6],
+    #               [1, 3, 5] ]
+    # rotateLeft : forall a. Array (Array a) -> Array (Array a)
+    rotateLeft = fun arr2 =>
+        let h = stdarr.length arr2 in
+        let w = stdarr.length (stdarr.head arr2) in
+        stdarr.generate (fun x => stdarr.generate (fun y => array2.get (w - x - 1) y arr2) h) w,
   },
 
 }
