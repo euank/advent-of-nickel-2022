@@ -61,7 +61,7 @@ let stdnum = num in
     #   [ 4, 5, 6],
     #   [ 7, 8, 9] ]
     # get 1 2 = 8
-    # get 0 0 = 2
+    # get 0 0 = 1
     get : forall a. Num -> Num -> Array (Array a) -> a
       = fun x y arr2 => arr2 |> stdarr.elem_at y |> stdarr.elem_at x,
 
