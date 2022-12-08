@@ -1,6 +1,5 @@
 let arr = import "./testdata/arr.ncl" in
 
-
 # time on my machine: 23s
 let maxFold = array.foldl (fun max el => if el > max then el else max) 0 in
 

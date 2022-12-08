@@ -3,6 +3,7 @@
 let stdarr = array in
 let stdstr = string in
 let stdrec = record in
+let stdnum = num in
 {
   array = {
     cmpRev : (forall a. (a -> a -> [| `Lesser, `Equal, `Greater |]) -> (a -> a -> [| `Lesser, `Equal, `Greater |]))
@@ -27,7 +28,14 @@ let stdrec = record in
       = fun n val arr => (take n arr) @ [ val ] @ (drop (n + 1) arr),
 
     singleton : forall a. a -> Array a | doc "create an array with a single element"
-      = fun a => [a]
+      = fun a => [a],
+
+    maxNum : Array Num -> Num
+      = fun arr =>
+        let len = stdarr.length arr in
+        if len == 1 then (stdarr.head arr)
+        else if len == 2 then stdnum.max (stdarr.head arr) (stdarr.elem_at 1 arr)
+        else maxNum ((stdarr.generate (fun i => stdnum.max (stdarr.elem_at (i * 2) arr) (stdarr.elem_at (i * 2 + 1) arr)) (stdnum.floor (len / 2))) @ (if (len % 2) == 1 then [(stdarr.elem_at (len - 1) arr)] else [])),
   },
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"
