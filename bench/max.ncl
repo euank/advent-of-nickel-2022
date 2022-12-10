@@ -1,4 +1,5 @@
 let arr = import "./testdata/arr.ncl" in
+let lib = import "../lib.ncl" in
 
 # time on my machine: 23s
 let maxFold = array.foldl (fun max el => if el > max then el else max) 0 in
@@ -13,6 +14,9 @@ let rec maxRec = fun arr =>
   else let maxRest = maxRec (array.tail arr) in
     if next > maxRest then next else maxRest
 in
+
+# time on my machine: 0.08
+let maxFoldl' = lib.array.foldl' (fun max el => if el > max then el else max) 0 in
 
 # time on my machine: 0.07
 let rec chunkGenMax = fun arr =>

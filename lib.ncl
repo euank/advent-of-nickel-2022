@@ -36,6 +36,12 @@ let stdnum = num in
         if len == 1 then (stdarr.head arr)
         else if len == 2 then stdnum.max (stdarr.head arr) (stdarr.elem_at 1 arr)
         else maxNum ((stdarr.generate (fun i => stdnum.max (stdarr.elem_at (i * 2) arr) (stdarr.elem_at (i * 2 + 1) arr)) (stdnum.floor (len / 2))) @ (if (len % 2) == 1 then [(stdarr.elem_at (len - 1) arr)] else [])),
+
+    foldl' : forall a. forall a b. (a -> b -> a) -> a -> Array b -> a
+      | doc "Identical to the stdlib array.foldl except fast."
+      = fun f acc l =>
+          let rec out = stdarr.generate (fun i => if i == 0 then acc else f (stdarr.elem_at (i - 1) out) (stdarr.elem_at i l)) (stdarr.length l) in
+          last out,
   },
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"
