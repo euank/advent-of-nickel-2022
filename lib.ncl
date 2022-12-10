@@ -40,8 +40,12 @@ let stdnum = num in
     foldl' : forall a. forall a b. (a -> b -> a) -> a -> Array b -> a
       | doc "Identical to the stdlib array.foldl except fast."
       = fun f acc l =>
-          let rec out = stdarr.generate (fun i => if i == 0 then acc else f (stdarr.elem_at (i - 1) out) (stdarr.elem_at i l)) (stdarr.length l) in
+          let rec out = stdarr.generate (fun i => f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l)) (stdarr.length l) in
           last out,
+
+    flatten' : forall a. Array (Array a) -> Array a
+      | doc "array.flatten, but faster."
+        = fun l => foldl' (fun acc l => acc @ l) [] l,
   },
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"
