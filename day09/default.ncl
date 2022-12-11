@@ -28,7 +28,7 @@ let applyInstruction = fun state instr =>
     {
       head = newLoc,
       tail = state.head,
-      out = state.out @ [state.head],
+      out = let key = "%{string.from_num state.head.x}_%{string.from_num state.head.y}" in if record.has_field key state.out.m then state.out else {m = state.out.m & {"%{key}" = true}, len = state.out.len + 1},
     }
   else
     {
@@ -42,9 +42,9 @@ let part1Answer = fun instr =>
   let out = (lib.array.foldl' applyInstruction ({
     head = {x = 0, y = 0},
     tail = {x = 0, y = 0},
-    out = [{x = 0, y = 0}],
+    out = {m = {"0_0" = true}, len = 1},
   }) instr).out in
-  (lib.array.foldl' (fun state el => let key = "%{string.from_num el.x}_%{string.from_num el.y}" in if record.has_field key state.m then state else {m = state.m & {"%{key}" = true}, len = state.len + 1}) {m={},len=0} out).len
+  out.len
 in
 {
   part1 = part1Answer flatInstructions,
