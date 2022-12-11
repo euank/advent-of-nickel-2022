@@ -75,6 +75,16 @@ let stdnum = num in
     get : forall a. Num -> Num -> Array (Array a) -> a
       = fun x y arr2 => arr2 |> stdarr.elem_at y |> stdarr.elem_at x,
 
+    getDefault = fun x y def arr2 => if x < (width arr2) && y < (height arr2) then get x y arr2 else def,
+
+    width = fun arr2 => stdarr.length (stdarr.head arr2),
+    height = fun arr2 => stdarr.length arr2,
+
+    set = fun x y v arr2 => stdarr.generate (fun y' => stdarr.generate (fun x' => if x == x' && y == y' then v else get x' y' arr2) (width arr2)) (height arr2),
+
+    resize = fun w h zero arr2 => stdarr.generate (fun y => stdarr.generate (fun x => getDefault x y zero arr2) w) h,
+
+
     # Rotate a 2d arr right. For example:
     # rotateRight [ [1, 2],
     #               [3, 4],
