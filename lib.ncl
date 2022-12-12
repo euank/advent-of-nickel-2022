@@ -9,11 +9,14 @@ let stdnum = num in
     cmpRev : (forall a. (a -> a -> [| `Lesser, `Equal, `Greater |]) -> (a -> a -> [| `Lesser, `Equal, `Greater |]))
       = fun f => fun l r => let orig = f l r in if orig == `Lesser then `Greater else if orig == `Greater then `Lesser else `Equal,
 
+    slice : forall a. Num -> Num -> Array a -> Array a | doc "slice the array from index i to j"
+      = fun i j arr => stdarr.generate (fun idx => stdarr.elem_at (idx + i) arr) (1 + j - i),
+
     take : forall a. Num -> Array a -> Array a | doc "take n elements from an array"
        = fun n arr => if n == 0 then [] else [ (stdarr.head arr) ] @ (take (n - 1) (stdarr.tail arr)),
 
     drop : forall a. Num -> Array a -> Array a | doc "drop n elements from an array"
-      = fun n arr => if n == 0 then arr else drop (n - 1) (stdarr.tail arr),
+      = fun n arr => if (stdarr.length arr) == 0 || n == 0 then arr else drop (n - 1) (stdarr.tail arr),
 
     chunk : forall a. Num -> Array a -> Array (Array a) | doc "chunk an array into arrays of size n"
       = fun n arr => if (stdarr.length arr) <= n then [ arr ] else [(take n arr)] @ (chunk n (drop n arr)),
@@ -40,6 +43,7 @@ let stdnum = num in
     foldl' : forall a. forall a b. (a -> b -> a) -> a -> Array b -> a
       | doc "Identical to the stdlib array.foldl except fast."
       = fun f acc l =>
+          if stdarr.length l == 0 then acc else
           let rec out = stdarr.generate (fun i => f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l)) (stdarr.length l) in
           last out,
 
@@ -56,6 +60,10 @@ let stdnum = num in
       = fun prefix str =>
           if (stdstr.length prefix) > (stdstr.length str) then false
           else (stdstr.substring 0 (stdstr.length prefix) str) == prefix,
+
+    # splitn : Num -> Str -> Str -> Array Str
+    splitn
+      = fun n sep str => let s1 = stdstr.split sep str in if stdarr.length s1 > n then (array.take (n - 1) s1) @ [(stdstr.join sep (array.drop (n - 1) s1))] else s1,
   },
 
   record = {
