@@ -1,10 +1,10 @@
-let input = import "./input.ncl"
-in
+let lib = import "../lib.ncl" in
+let input = import "./input.ncl" in
 
 let p1 = input |>
   string.split "\n" |>
   array.map (string.split " ") |>
-  array.foldl (
+  lib.array.foldl' (
     fun acc el =>
       let lVal = (string.code (array.head el)) - 65 in
       let rVal = (string.code (array.elem_at 1 el)) - 88 in
@@ -25,7 +25,7 @@ let p2 = input |>
       let rVal = (string.code (array.elem_at 1 el)) - 88 in
       [ lVal, rVal ]
   ) |>
-  array.foldl (
+  lib.array.foldl' (
     let
       goalScore = fun l r =>
         # lose

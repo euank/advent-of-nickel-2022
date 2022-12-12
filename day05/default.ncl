@@ -48,6 +48,6 @@ let rec applyMove2 = fun stack move =>
       lib.array.set (move.from - 1) (lib.array.drop move.count fromCol)
 in
 {
-  part1 = (array.foldl applyMove stacks moves) |> stackTops,
-  part2 = (array.foldl applyMove2 stacks moves) |> stackTops
+  part1 = (lib.array.foldl' applyMove stacks moves) |> stackTops,
+  part2 = (lib.array.foldl' applyMove2 stacks moves) |> stackTops
 }

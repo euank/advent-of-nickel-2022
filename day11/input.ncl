@@ -54,4 +54,4 @@ Monkey 7:
   Test: divisible by 2
     If true: throw to monkey 2
     If false: throw to monkey 3
-"%m
+"%

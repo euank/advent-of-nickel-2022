@@ -511,4 +511,4 @@ move 5 from 2 to 3
 move 4 from 1 to 5
 move 4 from 7 to 1
 move 8 from 5 to 8
-"%m
+"%

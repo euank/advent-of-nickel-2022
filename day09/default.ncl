@@ -60,5 +60,5 @@ let part2Answer = fun instr =>
 in
 {
   part1 = part1Answer flatInstructions,
-# part2 = part2Answer flatInstructions,
+  part2 = part2Answer flatInstructions,
 }

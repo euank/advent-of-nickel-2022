@@ -26,15 +26,15 @@ let updateState = fun state el =>
   else "unrechable"
 
 in
-let fs = (array.foldl updateState {dir = [], fs = {}} parsed).fs in
+let fs = (lib.array.foldl' updateState {dir = [], fs = {}} parsed).fs in
 
 let rec dirSize = fun fs dir =>
   if !(record.has_field dir fs) then 0
-  else array.foldl (fun acc entry => acc + (if entry.typ == `File then entry.size else (dirSize fs ((if dir == "/" then "/" else (dir ++ "/")) ++ entry.name)))) 0 fs."%{dir}"
+  else lib.array.foldl' (fun acc entry => acc + (if entry.typ == `File then entry.size else (dirSize fs ((if dir == "/" then "/" else (dir ++ "/")) ++ entry.name)))) 0 fs."%{dir}"
 in
 let dirSizes = record.map (fun k v => dirSize fs k) fs in
 let part1Answer = fun dirSizes =>
-  array.foldl (fun acc val => if val <= 100000 then acc + val else acc) 0 (record.values dirSizes)
+  lib.array.foldl' (fun acc val => if val <= 100000 then acc + val else acc) 0 (record.values dirSizes)
 
 in
 let part2Answer = fun dirSizes =>

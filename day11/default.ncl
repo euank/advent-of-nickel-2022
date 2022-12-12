@@ -2,7 +2,7 @@ let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
 
 let parseOperation = fun opLine =>
-  let parts = opLine |> string.match "^new = old (.) (.*)$" in
+  let parts = opLine |> %str_find% "^new = old (.) (.*)$" in
   let op = array.head parts.groups in
   let rhs' = lib.array.last parts.groups in
   {
@@ -14,7 +14,7 @@ let parseOperation = fun opLine =>
 in
 
 let parseTests = fun lines =>
-  let matches = string.match "Test: divisible by (\\d+) .*If true: throw to monkey (\\d+) .*If false: throw to monkey (\\d+)" (string.join " " lines) in
+  let matches = %str_find% "Test: divisible by (\\d+) .*If true: throw to monkey (\\d+) .*If false: throw to monkey (\\d+)" (string.join " " lines) in
   let divBy = array.head matches.groups |> string.to_num in
   let ifMatch = array.elem_at 1 matches.groups |> string.to_num in
   let ifNotMatch = array.elem_at 2 matches.groups |> string.to_num in

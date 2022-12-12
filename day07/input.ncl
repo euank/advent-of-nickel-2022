@@ -1045,4 +1045,4 @@ dir rjnnz
 $ cd rjnnz
 $ ls
 258856 gpgdm
-"%m
+"%

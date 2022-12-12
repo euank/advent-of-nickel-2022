@@ -12,7 +12,7 @@ let
 in
 let
   containedRanges = ranges |>
-    array.foldl (fun acc arr => let lhs = array.head arr in let rhs = array.elem_at 1 arr in
+    lib.array.foldl' (fun acc arr => let lhs = array.head arr in let rhs = array.elem_at 1 arr in
       acc + (if (rangesIntersect lhs rhs) then 1 else 0)
     ) 0
 # part2
@@ -23,7 +23,7 @@ let
 in
 let
   overlappingRanges = ranges |>
-    array.foldl (fun acc arr => let lhs = array.head arr in let rhs = array.elem_at 1 arr in
+    lib.array.foldl' (fun acc arr => let lhs = array.head arr in let rhs = array.elem_at 1 arr in
       acc + (if (rangesOverlap lhs rhs) then 1 else 0)
     ) 0
 in
