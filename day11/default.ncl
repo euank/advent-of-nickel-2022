@@ -6,7 +6,6 @@ let parseOperation = fun opLine =>
   let op = array.head parts.groups in
   let rhs' = lib.array.last parts.groups in
   {
-    str = opLine,
     apply = fun old =>
       let rhs = if rhs' == "old" then old else string.to_num rhs' in
       if op == "+" then old + rhs else if op == "*" then old * rhs else "unreachable",
@@ -19,8 +18,8 @@ let parseTests = fun lines =>
   let ifMatch = array.elem_at 1 matches.groups |> string.to_num in
   let ifNotMatch = array.elem_at 2 matches.groups |> string.to_num in
   {
-    str = string.join ". " lines,
-    apply = fun num => if num % divBy == 0 then ifMatch else ifNotMatch
+    num = divBy,
+    apply = fun num => if num % divBy == 0 then ifMatch else ifNotMatch,
   }
 in
 
@@ -28,12 +27,11 @@ in
 let Monkey = {
   items | Array Num,
   operation | {
-    str | Str,
     apply | Dyn,
   },
   tests | {
-    str | Str,
     apply | Dyn,
+    num | Num,
   },
 }
 in
@@ -51,20 +49,26 @@ let parseMonkey = fun monkey =>
   } | Monkey
 in
 
+let monkeys_ =
+  input |>
+  string.split "\n\n" |>
+  array.map parseMonkey in
+let worryLCM = lib.array.sum (*) (array.map (fun i => i.tests.num) monkeys_) in
+
 let MonkeyState = {
   monkeys | Array Monkey,
   inspections | Array Num,
 }
 in
 
-let doMonkey = fun state idx =>
+let doMonkey = fun p2 state idx =>
   let state' = (state | MonkeyState) in
   let curMonkey = array.elem_at idx state'.monkeys in
   let inspections' = array.length curMonkey.items in
   let newMonkeys = lib.array.foldl' (fun monkeys item =>
     let monkey = (array.elem_at idx monkeys) | Monkey in
     let newItem = monkey.operation.apply item | Num in
-    let newItem' = num.floor (newItem / 3) in
+    let newItem' = if p2 then (newItem % worryLCM) else num.floor (newItem / 3) in
     let throwTarget = monkey.tests.apply newItem' | Num in
     let newMonkeys = lib.array.set throwTarget (let old = array.elem_at throwTarget monkeys in {items = old.items @ [newItem'], operation = old.operation, tests = old.tests}) monkeys | Array Monkey in
     newMonkeys
@@ -76,18 +80,19 @@ let doMonkey = fun state idx =>
   }
 in
 
-let playRound = fun state =>
-  lib.array.foldl' doMonkey state (array.generate function.id (array.length state.monkeys))
+let playRound = fun p2 state =>
+  lib.array.foldl' (doMonkey p2) state (array.generate function.id (array.length state.monkeys))
 in
-
-let monkeys_ =
-  input |>
-  string.split "\n\n" |>
-  array.map parseMonkey in
 let initInspections = array.generate (fun i => 0) (array.length monkeys_) in
-let endState = lib.array.foldl' (fun ms i => playRound ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 20) in
+let endState = lib.array.foldl' (fun ms i => playRound false ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 20) in
 let monkeyBusiness = endState.inspections |> array.sort (lib.array.cmpRev lib.num.cmp) |> lib.array.take 2 |> lib.array.sum (*) in
+
+
+let endState2 = lib.array.foldl' (fun ms i => playRound true ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 10000) in
+let monkeyBusiness2 = endState2.inspections |> array.sort (lib.array.cmpRev lib.num.cmp) |> lib.array.take 2 |> lib.array.sum (*) in
 
 {
   part1 = monkeyBusiness,
+# Note: part2 does not execute. I think the code's maybe right, but oof is the execution time impossibly slow currently.
+#part2 = monkeyBusiness2,
 }
