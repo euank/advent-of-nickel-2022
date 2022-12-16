@@ -48,11 +48,6 @@ let stdnum = num in
           let rec out = stdarr.generate (fun i => let v = f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l) in v) (stdarr.length l) in
           last out,
 
-    foldl'' = fun f acc l =>
-          if stdarr.length l == 0 then acc else
-          let rec out = stdarr.generate (fun i => let v = f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l) in builtin.deep_seq v v) (stdarr.length l) in
-          last out,
-
     flatten' : forall a. Array (Array a) -> Array a
       | doc "array.flatten, but faster."
         = fun l => foldl' (fun acc l => acc @ l) [] l,
