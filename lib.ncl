@@ -5,6 +5,7 @@ let stdstr = string in
 let stdrec = record in
 let stdnum = num in
 {
+  force' : forall a. a -> a = fun a => builtin.deep_seq (a | Dyn) a,
   array = {
     cmpRev : (forall a. (a -> a -> [| `Lesser, `Equal, `Greater |]) -> (a -> a -> [| `Lesser, `Equal, `Greater |]))
       = fun f => fun l r => let orig = f l r in if orig == `Lesser then `Greater else if orig == `Greater then `Lesser else `Equal,
@@ -44,7 +45,12 @@ let stdnum = num in
       | doc "Identical to the stdlib array.foldl except fast."
       = fun f acc l =>
           if stdarr.length l == 0 then acc else
-          let rec out = stdarr.generate (fun i => f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l)) (stdarr.length l) in
+          let rec out = stdarr.generate (fun i => let v = f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l) in v) (stdarr.length l) in
+          last out,
+
+    foldl'' = fun f acc l =>
+          if stdarr.length l == 0 then acc else
+          let rec out = stdarr.generate (fun i => let v = f (if i == 0 then acc else (stdarr.elem_at (i - 1) out)) (stdarr.elem_at i l) in builtin.deep_seq v v) (stdarr.length l) in
           last out,
 
     flatten' : forall a. Array (Array a) -> Array a
