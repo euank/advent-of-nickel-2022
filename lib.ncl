@@ -31,6 +31,14 @@ let stdnum = num in
     set : forall a. Num -> a -> Array a -> Array a | doc "return a new array with the nth element replaced with the given value"
       = fun n val arr => (take n arr) @ [ val ] @ (drop (n + 1) arr),
 
+    dedupeSorted = fun arr =>
+      if stdarr.length arr <= 1 then arr else
+        let h = stdarr.head arr in
+        let t = stdarr.tail arr in
+        if h == (stdarr.head t)
+          then dedupeSorted ([h] @ (stdarr.tail t))
+          else [h] @ (dedupeSorted t),
+
     singleton : forall a. a -> Array a | doc "create an array with a single element"
       = fun a => [a],
 
@@ -51,6 +59,9 @@ let stdnum = num in
     flatten' : forall a. Array (Array a) -> Array a
       | doc "array.flatten, but faster."
         = fun l => foldl' (fun acc l => acc @ l) [] l,
+
+    find = fun f arr =>
+          foldl' (fun acc l => if (f l) then l else acc) null arr,
   },
   num = {
     cmp : Num -> Num -> [| `Lesser, `Equal, `Greater |] | doc "comparison function for numbers, useful with array.sort"
@@ -84,6 +95,9 @@ let stdnum = num in
     get : forall a. Num -> Num -> Array (Array a) -> a
       = fun x y arr2 => arr2 |> stdarr.elem_at y |> stdarr.elem_at x,
 
+    generate : forall a. Num -> Num -> (Num -> Num -> a) -> Array (Array a)
+      = fun w h f => stdarr.generate (fun y => stdarr.generate (fun x => f x y) w) h,
+
     getDefault = fun x y def arr2 => if x < (width arr2) && y < (height arr2) then get x y arr2 else def,
 
     width = fun arr2 => stdarr.length (stdarr.head arr2),
@@ -92,7 +106,6 @@ let stdnum = num in
     set = fun x y v arr2 => stdarr.generate (fun y' => stdarr.generate (fun x' => if x == x' && y == y' then v else get x' y' arr2) (width arr2)) (height arr2),
 
     resize = fun w h zero arr2 => stdarr.generate (fun y => stdarr.generate (fun x => getDefault x y zero arr2) w) h,
-
 
     # Rotate a 2d arr right. For example:
     # rotateRight [ [1, 2],
