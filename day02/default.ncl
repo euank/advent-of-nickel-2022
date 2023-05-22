@@ -2,12 +2,12 @@ let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
 
 let p1 = input |>
-  string.split "\n" |>
-  array.map (string.split " ") |>
+  std.string.split "\n" |>
+  std.array.map (std.string.split " ") |>
   lib.array.foldl' (
     fun acc el =>
-      let lVal = (string.code (array.head el)) - 65 in
-      let rVal = (string.code (array.elem_at 1 el)) - 88 in
+      let lVal = (lib.string.code (std.array.first el)) - 65 in
+      let rVal = (lib.string.code (std.array.at 1 el)) - 88 in
       acc + rVal + 1 + (
         if lVal == rVal then 3
         else if ((lVal + 1) % 3) == rVal then 6
@@ -17,12 +17,12 @@ let p1 = input |>
 in
 
 let p2 = input |>
-  string.split "\n" |>
-  array.map (string.split " ") |>
-  array.map (
+  std.string.split "\n" |>
+  std.array.map (std.string.split " ") |>
+  std.array.map (
     fun el =>
-      let lVal = (string.code (array.head el)) - 65 in
-      let rVal = (string.code (array.elem_at 1 el)) - 88 in
+      let lVal = (lib.string.code (std.array.first el)) - 65 in
+      let rVal = (lib.string.code (std.array.at 1 el)) - 88 in
       [ lVal, rVal ]
   ) |>
   lib.array.foldl' (
@@ -35,7 +35,7 @@ let p2 = input |>
         # win
         else (l + 1) % 3 + 1 + 6
     in
-    fun acc el => acc + (goalScore (array.head el) (array.elem_at 1 el))
+    fun acc el => acc + (goalScore (std.array.first el) (std.array.at 1 el))
   ) 0
 in
 {

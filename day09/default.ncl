@@ -1,5 +1,9 @@
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
+let array = std.array in
+let string = std.string in
+let record = std.record in
+let number = std.number in
 
 let instructions =
   input |>
@@ -7,7 +11,7 @@ let instructions =
   array.map (fun line =>
     line |>
     string.split " " |>
-    (fun els => { move = array.head els, num = string.to_num (array.elem_at 1 els) })
+    (fun els => { move = array.first els, num = string.to_number (array.at 1 els) })
   ) in
 
 let flatInstructions = lib.array.flatten' (
@@ -15,7 +19,7 @@ let flatInstructions = lib.array.flatten' (
 ) in
 
 let applyInstruction = fun state instr =>
-  let head = array.head state.rope in
+  let head = array.first state.rope in
   let newHead = if instr.move == "U" || instr.move == "D" then
   let dir = if instr.move == "U" then 1 else -1 in
     { x = head.x, y = head.y + dir}
@@ -27,9 +31,9 @@ let applyInstruction = fun state instr =>
   let rec newRope = array.generate (
     fun i => if i == 0 then newHead
       else
-        let prev = (array.elem_at (i - 1) newRope) in
-        let cur = (array.elem_at i state.rope) in
-        if (num.abs (cur.x - prev.x) > 1) || (num.abs (cur.y - prev.y) > 1) then
+        let prev = (array.at (i - 1) newRope) in
+        let cur = (array.at i state.rope) in
+        if (number.abs (cur.x - prev.x) > 1) || (number.abs (cur.y - prev.y) > 1) then
           if cur.x == prev.x then {x = cur.x, y = cur.y + (if cur.y < prev.y then 1 else -1)}
           else if cur.y == prev.y then {y = cur.y, x = cur.x + (if cur.x < prev.x then 1 else -1)}
           else {
@@ -41,7 +45,7 @@ let applyInstruction = fun state instr =>
     let tail = lib.array.last newRope in
     {
       rope = newRope,
-      out = let key = "%{string.from_num tail.x}_%{string.from_num tail.y}" in if record.has_field key state.out.m then state.out else {m = state.out.m & {"%{key}" = true}, len = state.out.len + 1},
+      out = let key = "%{string.from_number tail.x}_%{string.from_number tail.y}" in if record.has_field key state.out.m then state.out else {m = state.out.m & {"%{key}" = true}, len = state.out.len + 1},
     }
 in
 

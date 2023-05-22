@@ -1,9 +1,12 @@
 let lib = import "../lib.ncl" in
 let array2 = lib.array2 in
 let input = import "./input.ncl" in
+let array = std.array in
+let string = std.string in
+let function = std.function in
 
 # Parse into a 2d array
-let grid = input |> string.split "\n" |> array.map (fun line => line |> string.chars |> (array.map string.to_num)) in
+let grid = input |> string.split "\n" |> array.map (fun line => line |> string.characters |> (array.map string.to_number)) in
 # Mark visible on a single row
 let markVisibleOnRow = fun row => (lib.array.foldl' (fun state el => if el > state.max then {visible = state.visible @ [true], max = el} else {visible = state.visible @ [false], max = state.max}) {visible = [], max = -1} row).visible in
 # Now, do this for each row. Then flip the array to do each row backwards.
@@ -20,7 +23,7 @@ let part1Answer = fun grid =>
     grid |> array2.rotateRight |> array.map markVisibleOnRow |> array2.rotateLeft,
   ] in
   # merge them all together, just see if anything is visible
-  let merged = array.generate (fun x => (array.generate (fun y => array.any function.id (array.map (fun a => array2.get x y a) visibleDirections)) (array.length (array.head grid)))) (array.length grid) in
+  let merged = array.generate (fun x => (array.generate (fun y => array.any function.id (array.map (fun a => array2.get x y a) visibleDirections)) (array.length (array.first grid)))) (array.length grid) in
   lib.array.foldl' (fun acc el => acc + (lib.array.foldl' (fun acc2 el2 => acc2 + (if el2 then 1 else 0)) 0 el)) 0 merged
 in
 # part2
@@ -36,13 +39,13 @@ let viewDistanceOnRow =
   # to height 9 can see 9.
   # If we get a new tree of height 3, that means anything <= height 3 can now see 0, and everything > height 3 can see +1 distance.
   # Update it as such
-  let updateDists = fun dists el => array.generate (fun i => if i <= el then 0 else (array.elem_at i dists) + 1) (array.length dists) in
+  let updateDists = fun dists el => array.generate (fun i => if i <= el then 0 else (array.at i dists) + 1) (array.length dists) in
   let processRow = fun row =>
     lib.array.foldl'
-      (fun state el => { out = state.out @ [(array.elem_at el state.dists) + 1], dists = updateDists state.dists el })
+      (fun state el => { out = state.out @ [(array.at el state.dists) + 1], dists = updateDists state.dists el })
       # start with 0, you can see nothing on the far edges iiuc
       ({ out = [0], dists = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] })
-      (array.tail row) in
+      (array.drop_first row) in
   fun row => (processRow row).out
 in
 let part2Answer = fun grid =>
@@ -53,8 +56,8 @@ let part2Answer = fun grid =>
     array.map viewDistanceOnRow (array2.rotateRight grid) |> array2.rotateLeft,
   ] in
   # Multiply em all together, as it says to
-  let merged = array.generate (fun y => (array.generate (fun x => lib.array.foldl' (fun acc el => acc * el) 1 (array.map (fun arr => array2.get x y arr) dirs)) (array.length (array.head grid)))) (array.length grid) in
-  lib.array.maxNum (array.flatten merged)
+  let merged = array.generate (fun y => (array.generate (fun x => lib.array.foldl' (fun acc el => acc * el) 1 (array.map (fun arr => array2.get x y arr) dirs)) (array.length (array.first grid)))) (array.length grid) in
+  lib.array.maxNumber (array.flatten merged)
 in
 {
   part1 = part1Answer grid,
