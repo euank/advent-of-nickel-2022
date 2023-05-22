@@ -5,12 +5,12 @@ let instructions =
   input |>
   string.split "\n" |>
   array.map (fun line =>
-    if line == "noop" then { instr = `Noop }
-    else { instr = `Add, val = string.to_num (array.elem_at 1 (string.split " " line))}
+    if line == "noop" then { instr = 'Noop }
+    else { instr = 'Add, val = string.to_num (array.elem_at 1 (string.split " " line))}
   ) in
 
 let compute = fun state instr =>
-  if instr.instr == `Noop then
+  if instr.instr == 'Noop then
     {
       x = state.x,
       cycles = state.cycles + 1,

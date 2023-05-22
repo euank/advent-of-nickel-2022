@@ -5,7 +5,7 @@ let lib = import "../lib.ncl" in
 let maxFold = array.foldl (fun max el => if el > max then el else max) 0 in
 
 # time on my machine: 25s
-let maxFoldNumMax = array.foldl num.max 0 in
+let maxFoldNumMax = std.array.foldl std.number.max 0 in
 
 # time on my machine: 44s
 let rec maxRec = fun arr =>
@@ -22,7 +22,7 @@ let maxFoldl' = lib.array.foldl' (fun max el => if el > max then el else max) 0 
 let rec chunkGenMax = fun arr =>
   let len = array.length arr in
   if len == 1 then (array.head arr)
-  else if len == 2 then num.max (array.head arr) (array.elem_at 1 arr)
-  else chunkGenMax ((array.generate (fun i => num.max (array.elem_at (i * 2) arr) (array.elem_at (i * 2 + 1) arr)) (num.floor (len / 2))) @ (if (len % 2) == 1 then [(array.elem_at (len - 1) arr)] else []))
+  else if len == 2 then std.number.max (array.head arr) (array.elem_at 1 arr)
+  else chunkGenMax ((array.generate (fun i => std.number.max (array.elem_at (i * 2) arr) (array.elem_at (i * 2 + 1) arr)) (std.std.num.floor (len / 2))) @ (if (len % 2) == 1 then [(array.elem_at (len - 1) arr)] else []))
 in
   chunkGenMax arr

@@ -1,12 +1,12 @@
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
 
-let summedParts = input |> string.split "\n\n" |> array.map (fun s => (string.split "\n" s |> array.map string.to_num |> array.fold (fun l r => l + r) 0))
+let summedParts = input |> std.string.split "\n\n" |> std.array.map (fun s => (std.string.split "\n" s |> std.array.map std.string.to_number |> std.array.fold_right (fun l r => l + r) 0))
 in
 
-let sorted = array.sort (lib.array.cmpRev lib.num.cmp) summedParts
+let sorted = std.array.sort (lib.array.cmpRev lib.num.cmp) summedParts
 in
 {
-  part1 = array.head sorted,
-  part2 = array.map (fun i => array.elem_at i sorted) [0, 1, 2] |> (lib.array.foldl' (fun l r => l + r) 0)
+  part1 = std.array.first sorted,
+  part2 = std.array.map (fun i => std.array.at i sorted) [0, 1, 2] |> (lib.array.foldl' (fun l r => l + r) 0)
 }
