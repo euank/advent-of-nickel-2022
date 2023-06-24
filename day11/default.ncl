@@ -28,19 +28,6 @@ let parseTests = fun lines =>
 in
 
 
-let Monkey = {
-  items | Array Number,
-  operation | {
-    apply | Dyn,
-  },
-  tests | {
-    apply | Dyn,
-    num | Number,
-  },
-}
-in
-
-
 let parseMonkey = fun monkey =>
   let lines = lib.array.drop 1 (string.split "\n" monkey) |> array.map string.trim in
   let startingItems = array.first lines |> lib.string.splitn 3 " " |> lib.array.last |> string.split ", " |> array.map string.to_number in
@@ -50,7 +37,7 @@ let parseMonkey = fun monkey =>
     items = startingItems,
     operation = operation',
     tests = tests',
-  } | Monkey
+  }
 in
 
 let monkeys_ =
@@ -59,25 +46,18 @@ let monkeys_ =
   array.map parseMonkey in
 let worryLCM = lib.array.sum (*) (array.map (fun i => i.tests.num) monkeys_) in
 
-let MonkeyState = {
-  monkeys | Array Monkey,
-  inspections | Array Number,
-}
-in
-
 let doMonkey = fun p2 state idx =>
-  let state' = (state | MonkeyState) in
-  let curMonkey = array.at idx state'.monkeys in
+  let curMonkey = array.at idx state.monkeys in
   let inspections' = array.length curMonkey.items in
   let newMonkeys = lib.array.foldl' (fun monkeys item =>
-    let monkey = (array.at idx monkeys) | Monkey in
-    let newItem = monkey.operation.apply item | Number in
+    let monkey = (array.at idx monkeys) in
+    let newItem = monkey.operation.apply item in
     let newItem' = if p2 then (newItem % worryLCM) else number.floor (newItem / 3) in
-    let throwTarget = monkey.tests.apply newItem' | Number in
-    let newMonkeys = lib.array.set throwTarget (let old = array.at throwTarget monkeys in {items = old.items @ [newItem'], operation = old.operation, tests = old.tests}) monkeys | Array Monkey in
+    let throwTarget = monkey.tests.apply newItem' in
+    let newMonkeys = lib.array.set throwTarget (let old = array.at throwTarget monkeys in {items = old.items @ [newItem'], operation = old.operation, tests = old.tests}) monkeys in
     newMonkeys
-  ) state'.monkeys curMonkey.items in
-  let newMonkeys' = lib.array.set idx ({items = [], operation = curMonkey.operation, tests = curMonkey.tests}) newMonkeys | Array Monkey in
+  ) state.monkeys curMonkey.items in
+  let newMonkeys' = lib.array.set idx ({items = [], operation = curMonkey.operation, tests = curMonkey.tests}) newMonkeys in
   {
     monkeys = newMonkeys',
     inspections = lib.array.set idx ((array.at idx state.inspections) + inspections') state.inspections,

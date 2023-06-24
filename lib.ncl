@@ -6,28 +6,28 @@ in
 {
   # force' : forall a. a -> a = fun a => std.deep_seq (a | Dyn) a,
   array = {
-    cmpRev : (forall a. (a -> a -> [| 'Lesser, 'Equal, 'Greater |]) -> (a -> a -> [| 'Lesser, 'Equal, 'Greater |]))
+    cmpRev
       = fun f => fun l r => let orig = f l r in if orig == 'Lesser then 'Greater else if orig == 'Greater then 'Lesser else 'Equal,
 
-    slice : forall a. Number -> Number -> Array a -> Array a | doc "slice the array from index i to j"
+    slice
       = fun i j arr => std.array.generate (fun idx => std.array.at (idx + i) arr) (1 + j - i),
 
-    take : forall a. Number -> Array a -> Array a | doc "take n elements from an array"
+    take
        = fun n arr => if n == 0 then [] else [ (std.array.first arr) ] @ (take (n - 1) (std.array.drop_first arr)),
 
-    drop : forall a. Number -> Array a -> Array a | doc "drop n elements from an array"
+    drop
       = fun n arr => if (std.array.length arr) == 0 || n == 0 then arr else drop (n - 1) (std.array.drop_first arr),
 
-    chunk : forall a. Number -> Array a -> Array (Array a) | doc "chunk an array into arrays of size n"
+    chunk
       = fun n arr => if (std.array.length arr) <= n then [ arr ] else [(take n arr)] @ (chunk n (drop n arr)),
 
-    sum : forall a. (a -> a -> a) -> Array a -> a | doc "apply a binary operation to an array"
+    sum
       = fun f arr => std.array.fold_left f (std.array.first arr) (std.array.drop_first arr),
 
-    last : forall a. Array a -> a | doc "last element of an array"
+    last
       = fun arr => std.array.at ((std.array.length arr) - 1) arr,
 
-    set : forall a. Number -> a -> Array a -> Array a | doc "return a new array with the nth element replaced with the given value"
+    set
       = fun n val arr => (take n arr) @ [ val ] @ (drop (n + 1) arr),
 
     dedupeSorted = fun arr =>
@@ -38,24 +38,24 @@ in
           then dedupeSorted ([h] @ (std.array.drop_first t))
           else [h] @ (dedupeSorted t),
 
-    singleton : forall a. a -> Array a | doc "create an array with a single element"
+    singleton | doc "create an array with a single element"
       = fun a => [a],
 
-    maxNumber : Array Number -> Number
+    maxNumber
       = fun arr =>
         let len = std.array.length arr in
         if len == 1 then (std.array.first arr)
         else if len == 2 then std.number.max (std.array.first arr) (std.array.at 1 arr)
         else maxNumber ((std.array.generate (fun i => std.number.max (std.array.at (i * 2) arr) (std.array.at (i * 2 + 1) arr)) (std.number.floor (len / 2))) @ (if (len % 2) == 1 then [(std.array.at (len - 1) arr)] else [])),
 
-    foldl' : forall a. forall a b. (a -> b -> a) -> a -> Array b -> a
+    foldl'
       | doc "Identical to the stdlib array.fold_left except fast."
       = fun f acc l =>
           if std.array.length l == 0 then acc else
           let rec out = std.array.generate (fun i => let v = f (if i == 0 then acc else (std.array.at (i - 1) out)) (std.array.at i l) in v) (std.array.length l) in
           last out,
 
-    flatten' : forall a. Array (Array a) -> Array a
+    flatten'
       | doc "array.flatten, but faster."
         = fun l => foldl' (fun acc l => acc @ l) [] l,
 
@@ -63,17 +63,17 @@ in
           foldl' (fun acc l => if (f l) then l else acc) null arr,
   },
   num = {
-    cmp : Number -> Number -> [| 'Lesser, 'Equal, 'Greater |] | doc "comparison function for numbers, useful with array.sort"
+    cmp | doc "comparison function for numbers, useful with array.sort"
       = fun l r => if l < r then 'Lesser else 'Greater
   },
   string = {
-    starts_with : String -> String -> Bool
+    starts_with
       = fun prefix str =>
           if (std.string.length prefix) > (std.string.length str) then false
           else (std.string.substring 0 (std.string.length prefix) str) == prefix,
 
     # code returns the codepoint for an ascii character.
-    code : String -> Number
+    code
       = fun s => ascii."%{s}",
 
     # splitn : Number -> String -> String -> Array String
@@ -95,10 +95,10 @@ in
     #   [ 7, 8, 9] ]
     # get 1 2 = 8
     # get 0 0 = 1
-    get : forall a. Number -> Number -> Array (Array a) -> a
+    get
       = fun x y arr2 => arr2 |> std.array.at y |> std.array.at x,
 
-    generate : forall a. Number -> Number -> (Number -> Number -> a) -> Array (Array a)
+    generate
       = fun w h f => std.array.generate (fun y => std.array.generate (fun x => f x y) w) h,
 
     getDefault = fun x y def arr2 => if x < (width arr2) && y < (height arr2) then get x y arr2 else def,
