@@ -1,12 +1,14 @@
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
+let array = std.array in
+let string = std.string in
 
 let instructions =
   input |>
   string.split "\n" |>
   array.map (fun line =>
     if line == "noop" then { instr = 'Noop }
-    else { instr = 'Add, val = string.to_num (array.elem_at 1 (string.split " " line))}
+    else { instr = 'Add, val = string.to_number (array.at 1 (string.split " " line))}
   ) in
 
 let compute = fun state instr =>
@@ -35,12 +37,12 @@ let part1Answer = fun instr =>
     xs = [],
   }) instructions) in
   let cyclesToSum = [20, 60, 100, 140, 180, 220] in
-  let vals = array.map (fun idx => array.elem_at idx out.valHistory) cyclesToSum in
+  let vals = array.map (fun idx => array.at idx out.valHistory) cyclesToSum in
   lib.array.sum (+) vals in
 
 let drawCRT = fun state cycle =>
   let x = cycle % 40 in
-  let xVal = array.elem_at cycle state.xs in
+  let xVal = array.at cycle state.xs in
   let drawHash = if x == 0 then xVal == 0 || xVal == 1
     else if x == 39 then xVal == 38 || xVal == 39
     else (num.abs (x - xVal)) <= 1 in

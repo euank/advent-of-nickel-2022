@@ -1,7 +1,9 @@
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
+let array = std.array in
+let string = std.string in
 
-let summedParts = input |> std.string.split "\n\n" |> std.array.map (fun s => (std.string.split "\n" s |> std.array.map std.string.to_number |> std.array.fold_right (fun l r => l + r) 0))
+let summedParts = input |> std.string.split "\n\n" |> std.array.map (fun s => (std.string.split "\n" s |> std.array.map std.string.to_numberber |> std.array.fold_right (fun l r => l + r) 0))
 in
 
 let sorted = std.array.sort (lib.array.cmpRev lib.num.cmp) summedParts

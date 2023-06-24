@@ -6,7 +6,7 @@ let string = std.string in
 let ranges = input |>
   string.split "\n" |>
   array.map (string.split ",") |>
-  array.map (array.map (fun l => array.map string.to_number (string.split "-" l)))
+  array.map (array.map (fun l => array.map string.to_numberber (string.split "-" l)))
 in
 let
   rangesIntersect = fun l r => let ll = array.first l in let lr = array.at 1 l in let rl = array.first r in let rr = array.at 1 r in

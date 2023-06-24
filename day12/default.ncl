@@ -1,7 +1,9 @@
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
+let array = std.array in
+let string = std.string in
 
-let gridChars = string.split "\n" input |> array.map string.chars in
+let gridChars = string.split "\n" input |> array.map string.characters in
 let allGridCoords = array.generate (fun x' => array.generate (fun y' => { x = x', y = y' })  (lib.array2.height gridChars)) (lib.array2.width gridChars) |> array.flatten in
 let start = lib.array.find (fun el => (lib.array2.get el.x el.y gridChars) == "S") allGridCoords in
 let end = lib.array.find (fun el => (lib.array2.get el.x el.y gridChars) == "E") allGridCoords in
@@ -29,7 +31,7 @@ let astar = fun start end grid =>
   let rec astar' = fun state =>
     if array.length state.open == 0 then state & { err = "none left in open" }
     else
-      let pt = array.head state.open in
+      let pt = array.first state.open in
       let ptScore = lib.array2.get pt.x pt.y state.g in
       let ptH = lib.array2.get pt.x pt.y grid in
       if pt == end then ptScore
