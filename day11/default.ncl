@@ -1,3 +1,4 @@
+let std = import "../fastd.ncl" in
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
 let array = std.array in

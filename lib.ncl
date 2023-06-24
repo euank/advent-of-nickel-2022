@@ -1,8 +1,7 @@
 # nickel functions that seemed generic enough to be useful outside of a single day
 # Some may only be used in a single day, but each one felt at least generic
-let
-  ascii = import "./ascii.ncl"
-in
+let ascii = import "./ascii.ncl" in
+let std = import "./fastd.ncl" in
 {
   # force' : forall a. a -> a = fun a => std.deep_seq (a | Dyn) a,
   array = {
