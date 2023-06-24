@@ -1,6 +1,6 @@
-let std = import "../fastd.ncl" in
 let lib = import "../lib.ncl" in
 let input = import "./input.ncl" in
+let std = import "../fastd.ncl" in
 let array = std.array in
 let string = std.string in
 let function = std.function in
@@ -31,13 +31,10 @@ in
 
 let parseMonkey = fun monkey =>
   let lines = lib.array.drop 1 (string.split "\n" monkey) |> array.map string.trim in
-  let startingItems = array.first lines |> lib.string.splitn 3 " " |> lib.array.last |> string.split ", " |> array.map string.to_number in
-  let operation' = array.at 1 lines |> lib.string.splitn 2 ": " |> lib.array.last |> parseOperation in
-  let tests' = lib.array.slice 2 4 lines |> parseTests in
   {
-    items = startingItems,
-    operation = operation',
-    tests = tests',
+    items = array.first lines |> lib.string.splitn 3 " " |> lib.array.last |> string.split ", " |> array.map string.to_number,
+    operation = array.at 1 lines |> lib.string.splitn 2 ": " |> lib.array.last |> parseOperation,
+    tests = lib.array.slice 2 4 lines |> parseTests,
   }
 in
 
@@ -45,6 +42,7 @@ let monkeys_ =
   input |>
   string.split "\n\n" |>
   array.map parseMonkey in
+
 let worryLCM = lib.array.sum (*) (array.map (fun i => i.tests.num) monkeys_) in
 
 let doMonkey = fun p2 state idx =>
@@ -78,6 +76,7 @@ let monkeyBusiness2 = endState2.inspections |> array.sort (lib.array.cmpRev lib.
 
 {
   part1 = monkeyBusiness,
-# Note: part2 does not execute. I think the code's maybe right, but oof is the execution time impossibly slow currently.
-#part2 = monkeyBusiness2,
+# part2 cannot be made to run with nickel's performance.
+# I cannot figure out any clever way to get it to run
+# part2 = monkeyBusiness2,
 }
