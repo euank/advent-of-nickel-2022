@@ -28,7 +28,6 @@ let parseTests = fun lines =>
   }
 in
 
-
 let parseMonkey = fun monkey =>
   let lines = lib.array.drop 1 (string.split "\n" monkey) |> array.map string.trim in
   {
@@ -39,24 +38,31 @@ let parseMonkey = fun monkey =>
 in
 
 let monkeys_ =
-  input |>
-  string.split "\n\n" |>
-  array.map parseMonkey in
+  input
+  |> string.split "\n\n"
+  |> array.map parseMonkey
+in
 
 let worryLCM = lib.array.sum (*) (array.map (fun i => i.tests.num) monkeys_) in
 
 let doMonkey = fun p2 state idx =>
   let curMonkey = array.at idx state.monkeys in
   let inspections' = array.length curMonkey.items in
-  let newMonkeys = std.array.fold_left (fun monkeys item =>
-    let monkey = (array.at idx monkeys) in
-    let newItem = monkey.operation.apply item in
-    let newItem' = if p2 then (newItem % worryLCM) else number.floor (newItem / 3) in
-    let throwTarget = monkey.tests.apply newItem' in
-    let newMonkeys = lib.array.set throwTarget (let old = array.at throwTarget monkeys in {items = old.items @ [newItem'], operation = old.operation, tests = old.tests}) monkeys in
-    newMonkeys
-  ) state.monkeys curMonkey.items in
-  let newMonkeys' = lib.array.set idx ({items = [], operation = curMonkey.operation, tests = curMonkey.tests}) newMonkeys in
+  let newMonkeys =
+    std.array.fold_left
+      (
+        fun monkeys item =>
+          let monkey = (array.at idx monkeys) in
+          let newItem = monkey.operation.apply item in
+          let newItem' = if p2 then (newItem % worryLCM) else number.floor (newItem / 3) in
+          let throwTarget = monkey.tests.apply newItem' in
+          let newMonkeys = lib.array.set throwTarget (let old = array.at throwTarget monkeys in { items = old.items @ [newItem'], operation = old.operation, tests = old.tests }) monkeys in
+          newMonkeys
+      )
+      state.monkeys
+      curMonkey.items
+  in
+  let newMonkeys' = lib.array.set idx ({ items = [], operation = curMonkey.operation, tests = curMonkey.tests }) newMonkeys in
   {
     monkeys = newMonkeys',
     inspections = lib.array.set idx ((array.at idx state.inspections) + inspections') state.inspections,
@@ -67,11 +73,10 @@ let playRound = fun p2 state =>
   std.array.fold_left (doMonkey p2) state (array.generate function.id (array.length state.monkeys))
 in
 let initInspections = array.generate (fun i => 0) (array.length monkeys_) in
-let endState = std.array.fold_left (fun ms i => playRound false ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 20) in
+let endState = std.array.fold_left (fun ms i => playRound false ms) { monkeys = monkeys_, inspections = initInspections } (array.generate function.id 20) in
 let monkeyBusiness = endState.inspections |> array.sort (lib.array.cmpRev lib.num.cmp) |> lib.array.take 2 |> lib.array.sum (*) in
 
-
-let endState2 = std.array.fold_left (fun ms i => playRound true ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 10000) in
+let endState2 = std.array.fold_left (fun ms i => playRound true ms) { monkeys = monkeys_, inspections = initInspections } (array.generate function.id 10000) in
 let monkeyBusiness2 = endState2.inspections |> array.sort (lib.array.cmpRev lib.num.cmp) |> lib.array.take 2 |> lib.array.sum (*) in
 
 {

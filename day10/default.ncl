@@ -6,12 +6,17 @@ let function = std.function in
 let number = std.number in
 
 let instructions =
-  input |>
-  string.split "\n" |>
-  array.map (fun line =>
-    if line == "noop" then { instr = 'Noop }
-    else { instr = 'Add, val = string.to_number (array.at 1 (string.split " " line))}
-  ) in
+  input
+  |> string.split "\n"
+  |> array.map
+    (
+      fun line =>
+        if line == "noop" then
+          { instr = 'Noop }
+        else
+          { instr = 'Add, val = string.to_number (array.at 1 (string.split " " line)) }
+    )
+in
 
 let compute = fun state instr =>
   if instr.instr == 'Noop then
@@ -32,47 +37,76 @@ let compute = fun state instr =>
 in
 
 let part1Answer = fun instr =>
-  let out = (lib.array.foldl' compute ({
-    x = 1,
-    cycles = 0,
-    valHistory = [1],
-    xs = [],
-  }) instructions) in
+  let out = (
+    lib.array.foldl'
+      compute
+      (
+        {
+          x = 1,
+          cycles = 0,
+          valHistory = [1],
+          xs = [],
+        }
+      )
+      instructions
+  )
+  in
   let cyclesToSum = [20, 60, 100, 140, 180, 220] in
   let vals = array.map (fun idx => array.at idx out.valHistory) cyclesToSum in
-  lib.array.sum (+) vals in
+  lib.array.sum (+) vals
+in
 
 let drawCRT = fun state cycle =>
   let x = cycle % 40 in
   let xVal = array.at cycle state.xs in
-  let drawHash = if x == 0 then xVal == 0 || xVal == 1
-    else if x == 39 then xVal == 38 || xVal == 39
-    else (number.abs (x - xVal)) <= 1 in
-  if x == 39 then {
-    xs = state.xs,
-    curOut = [],
-    rows = state.rows @ [(state.curOut @ [(if drawHash then "#" else ".")])],
-  } else {
-    xs = state.xs,
-    curOut = state.curOut @ [(if drawHash then "#" else ".")],
-    rows = state.rows,
-  }
-
+  let drawHash =
+    if x == 0 then
+      xVal == 0 || xVal == 1
+    else if x == 39 then
+      xVal == 38 || xVal == 39
+    else
+      (number.abs (x - xVal)) <= 1
+  in
+  if x == 39 then
+    {
+      xs = state.xs,
+      curOut = [],
+      rows = state.rows @ [(state.curOut @ [(if drawHash then "#" else ".")])],
+    }
+  else
+    {
+      xs = state.xs,
+      curOut = state.curOut @ [(if drawHash then "#" else ".")],
+      rows = state.rows,
+    }
 in
 
 let part2Answer = fun instr =>
-  let c = (lib.array.foldl' compute ({
-    x = 1,
-    cycles = 0,
-    valHistory = [1],
-    xs = [],
-  }) instructions)
+  let c = (
+    lib.array.foldl'
+      compute
+      (
+        {
+          x = 1,
+          cycles = 0,
+          valHistory = [1],
+          xs = [],
+        }
+      )
+      instructions
+  )
   in
-  let out = lib.array.foldl' drawCRT ({
-    xs = c.xs,
-    curOut = [],
-    rows = [],
-  }) (array.generate function.id (6 * 40))
+  let out =
+    lib.array.foldl'
+      drawCRT
+      (
+        {
+          xs = c.xs,
+          curOut = [],
+          rows = [],
+        }
+      )
+      (array.generate function.id (6 * 40))
   in out.rows |> array.map (string.join "") |> string.join "\n"
 in
 {

@@ -8,7 +8,7 @@ let function = std.function in
 # Parse into a 2d array
 let grid = input |> string.split "\n" |> array.map (fun line => line |> string.characters |> (array.map string.to_number)) in
 # Mark visible on a single row
-let markVisibleOnRow = fun row => (lib.array.foldl' (fun state el => if el > state.max then {visible = state.visible @ [true], max = el} else {visible = state.visible @ [false], max = state.max}) {visible = [], max = -1} row).visible in
+let markVisibleOnRow = fun row => (lib.array.foldl' (fun state el => if el > state.max then { visible = state.visible @ [ true ], max = el } else { visible = state.visible @ [ false ], max = state.max }) { visible = [], max = -1 } row).visible in
 # Now, do this for each row. Then flip the array to do each row backwards.
 # Rotate for each column. etc etc. Get em all, merge em all together.
 let part1Answer = fun grid =>
@@ -21,7 +21,8 @@ let part1Answer = fun grid =>
     grid |> array2.rotateLeft |> array.map markVisibleOnRow |> array2.rotateRight,
     # bottom to top
     grid |> array2.rotateRight |> array.map markVisibleOnRow |> array2.rotateLeft,
-  ] in
+  ]
+  in
   # merge them all together, just see if anything is visible
   let merged = array.generate (fun x => (array.generate (fun y => array.any function.id (array.map (fun a => array2.get x y a) visibleDirections)) (array.length (array.first grid)))) (array.length grid) in
   lib.array.foldl' (fun acc el => acc + (lib.array.foldl' (fun acc2 el2 => acc2 + (if el2 then 1 else 0)) 0 el)) 0 merged
@@ -45,7 +46,8 @@ let viewDistanceOnRow =
       (fun state el => { out = state.out @ [(array.at el state.dists) + 1], dists = updateDists state.dists el })
       # start with 0, you can see nothing on the far edges iiuc
       ({ out = [0], dists = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] })
-      (array.drop_first row) in
+      (array.drop_first row)
+  in
   fun row => (processRow row).out
 in
 let part2Answer = fun grid =>
@@ -54,7 +56,8 @@ let part2Answer = fun grid =>
     array.map viewDistanceOnRow (array.map array.reverse grid) |> array.map array.reverse,
     array.map viewDistanceOnRow (array2.rotateLeft grid) |> array2.rotateRight,
     array.map viewDistanceOnRow (array2.rotateRight grid) |> array2.rotateLeft,
-  ] in
+  ]
+  in
   # Multiply em all together, as it says to
   let merged = array.generate (fun y => (array.generate (fun x => lib.array.foldl' (fun acc el => acc * el) 1 (array.map (fun arr => array2.get x y arr) dirs)) (array.length (array.first grid)))) (array.length grid) in
   lib.array.maxNumber (array.flatten merged)
