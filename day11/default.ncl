@@ -48,7 +48,7 @@ let worryLCM = lib.array.sum (*) (array.map (fun i => i.tests.num) monkeys_) in
 let doMonkey = fun p2 state idx =>
   let curMonkey = array.at idx state.monkeys in
   let inspections' = array.length curMonkey.items in
-  let newMonkeys = lib.array.foldl' (fun monkeys item =>
+  let newMonkeys = std.array.fold_left (fun monkeys item =>
     let monkey = (array.at idx monkeys) in
     let newItem = monkey.operation.apply item in
     let newItem' = if p2 then (newItem % worryLCM) else number.floor (newItem / 3) in
@@ -64,19 +64,17 @@ let doMonkey = fun p2 state idx =>
 in
 
 let playRound = fun p2 state =>
-  lib.array.foldl' (doMonkey p2) state (array.generate function.id (array.length state.monkeys))
+  std.array.fold_left (doMonkey p2) state (array.generate function.id (array.length state.monkeys))
 in
 let initInspections = array.generate (fun i => 0) (array.length monkeys_) in
-let endState = lib.array.foldl' (fun ms i => playRound false ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 20) in
+let endState = std.array.fold_left (fun ms i => playRound false ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 20) in
 let monkeyBusiness = endState.inspections |> array.sort (lib.array.cmpRev lib.num.cmp) |> lib.array.take 2 |> lib.array.sum (*) in
 
 
-let endState2 = lib.array.foldl' (fun ms i => playRound true ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 10000) in
+let endState2 = std.array.fold_left (fun ms i => playRound true ms) {monkeys = monkeys_, inspections = initInspections} (array.generate function.id 10000) in
 let monkeyBusiness2 = endState2.inspections |> array.sort (lib.array.cmpRev lib.num.cmp) |> lib.array.take 2 |> lib.array.sum (*) in
 
 {
   part1 = monkeyBusiness,
-# part2 cannot be made to run with nickel's performance.
-# I cannot figure out any clever way to get it to run
-# part2 = monkeyBusiness2,
+  part2 = monkeyBusiness2,
 }
