@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    nickel.url = "github:tweag/nickel";
+    nickel.url = "github:tweag/nickel/1.6.0";
   };
 
   outputs = { self, nixpkgs, nickel }:
