@@ -7,7 +7,7 @@ let function = std.function in
 let number = std.number in
 
 let parseOperation = fun opLine =>
-  let parts = opLine |> %str_find% "^new = old (.) (.*)$" in
+  let parts = opLine |> %string/find% "^new = old (.) (.*)$" in
   let op = array.first parts.groups in
   let rhs' = lib.array.last parts.groups in
   {
@@ -18,7 +18,7 @@ let parseOperation = fun opLine =>
 in
 
 let parseTests = fun lines =>
-  let matches = %str_find% "Test: divisible by (\\d+) .*If true: throw to monkey (\\d+) .*If false: throw to monkey (\\d+)" (string.join " " lines) in
+  let matches = %string/find% "Test: divisible by (\\d+) .*If true: throw to monkey (\\d+) .*If false: throw to monkey (\\d+)" (string.join " " lines) in
   let divBy = array.first matches.groups |> string.to_number in
   let ifMatch = array.at 1 matches.groups |> string.to_number in
   let ifNotMatch = array.at 2 matches.groups |> string.to_number in

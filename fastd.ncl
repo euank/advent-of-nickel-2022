@@ -13,7 +13,7 @@
             "this is the head"
           ```
         "%
-      = fun array => %elem_at% array 0,
+      = fun array => %array/at% array 0,
 
     last
       | doc m%"
@@ -26,7 +26,7 @@
             "this is not"
           ```
         "%
-      = fun array => %elem_at% array (%length% array - 1),
+      = fun array => %array/at% array (%array/length% array - 1),
 
     drop_first
       | doc m%"
@@ -39,7 +39,7 @@
             [ 2, 3 ]
           ```
         "%
-      = fun array => %array_slice% 1 (%length% array) array,
+      = fun array => %array/slice% 1 (%array/length% array) array,
 
     drop_last
       | doc m%"
@@ -52,7 +52,7 @@
             [ 1, 2 ]
           ```
         "%
-      = fun array => %array_slice% 0 (%length% array - 1) array,
+      = fun array => %array/slice% 0 (%array/length% array - 1) array,
 
     length
       | doc m%"
@@ -65,7 +65,7 @@
             2
           ```
         "%
-      = fun l => %length% l,
+      = fun l => %array/length% l,
 
     map
       | doc m%"
@@ -79,7 +79,7 @@
             [ 2, 3, 4 ]
           ```
         "%
-      = fun f l => %map% l f,
+      = fun f l => %array/map% l f,
 
     at
       | doc m%"
@@ -92,7 +92,7 @@
             "three"
           ```
         "%
-      = fun n l => %elem_at% l n,
+      = fun n l => %array/at% l n,
 
     concat
       | doc m%"
@@ -172,7 +172,7 @@
           ```
         "%
       = fun f acc array =>
-        let length = %length% array in
+        let length = %array/length% array in
         if length == 0 then
           acc
         else
@@ -181,7 +181,7 @@
               acc
             else
               let next_acc =
-                %elem_at% array n
+                %array/at% array n
                 |> f acc
               in
               go next_acc (n + 1)
@@ -213,13 +213,13 @@
           ```
         "%
       = fun f fst l =>
-        let length = %length% l in
+        let length = %array/length% l in
         let rec go = fun n =>
           if n == length then
             fst
           else
             go (n + 1)
-            |> f (%elem_at% l n)
+            |> f (%array/at% l n)
         in go 0,
 
     prepend
@@ -379,7 +379,7 @@
             [ 0, 1, 4, 9 ]
           ```
         "%
-      = fun f n => %generate% n f,
+      = fun f n => %array/generate% n f,
 
     sort
       | doc m%"
@@ -401,9 +401,9 @@
         "%
       #TODO: maybe inline partition to avoid contract checks?
       = fun cmp array =>
-        let length = %length% array in
-        let first = %elem_at% array 0 in
-        let rest = %array_slice% 1 length array in
+        let length = %array/length% array in
+        let first = %array/at% array 0 in
+        let rest = %array/slice% 1 length array in
         let parts = partition (fun x => (cmp x first == 'Lesser)) rest in
         if length <= 1 then
           array
@@ -440,12 +440,12 @@
           ```
         "%
       = fun v array =>
-        let length = %length% array in
+        let length = %array/length% array in
         if length <= 1 then
           array
         else
-          let first = %elem_at% array 0 in
-          let rest = %array_slice% 1 length array in
+          let first = %array/at% array 0 in
+          let rest = %array/slice% 1 length array in
           [first] @ (flat_map (fun a => [v, a]) rest),
 
     slice
@@ -469,7 +469,7 @@
             => [ "!" ]
            ```
         "%
-      = fun start end value => %array_slice% start end value,
+      = fun start end value => %array/slice% start end value,
 
     split_at
       | doc m%"
@@ -495,8 +495,8 @@
         "%
       = fun index value =>
         {
-          left = %array_slice% 0 index value,
-          right = %array_slice% index (%length% value) value
+          left = %array/slice% 0 index value,
+          right = %array/slice% index (%array/length% value) value
         },
 
     replicate
@@ -516,7 +516,7 @@
             => [ "x", "x", "x", "x", "x" ]
           ```
         "%
-      = fun n x => %generate% n (fun _i => x),
+      = fun n x => %array/generate% n (fun _i => x),
 
     range_step
       | doc m%"
@@ -537,7 +537,7 @@
           ```
         "%
       = fun start end step =>
-        %generate%
+        %array/generate%
           ((end - start) / step |> std.number.floor)
           (fun i => start + i * step),
 
@@ -596,8 +596,8 @@
           ```
         "%
       = fun f array =>
-        let first = %elem_at% array 0 in
-        let rest = %array_slice% 1 (%length% array) array in
+        let first = %array/at% array 0 in
+        let rest = %array/slice% 1 (%array/length% array) array in
         fold_left f first rest,
 
     reduce_right
@@ -634,9 +634,9 @@
           ```
         "%
       = fun f array =>
-        let last_index = %length% array - 1 in
-        let last = %elem_at% array last_index in
-        let rest = %array_slice% 0 last_index array in
+        let last_index = %array/length% array - 1 in
+        let last = %array/at% array last_index in
+        let rest = %array/slice% 0 last_index array in
         fold_right f last rest,
   },
 
@@ -892,7 +892,7 @@
           { hello = 2, world = 3 }
         ```
       "%
-      = fun f r => %record_map% r f,
+      = fun f r => %record/map% r f,
 
     fields
       | doc m%"
@@ -905,7 +905,7 @@
           [ "one", "two" ]
         ```
       "%
-      = fun r => %fields% r,
+      = fun r => %record/fields% r,
 
     values
       | doc m%"
@@ -918,7 +918,7 @@
           [ 1, "world" ]
         ```
       "%
-      = fun r => %values% r,
+      = fun r => %record/values% r,
 
     has_field
       | doc m%"
@@ -933,7 +933,7 @@
           true
         ```
       "%
-      = fun field r => %has_field% field r,
+      = fun field r => %record/has_field% field r,
 
     insert
       | doc m%%"
@@ -959,7 +959,7 @@
             => error
           ```
         "%%
-      = fun field content r => %record_insert% field r content,
+      = fun field content r => %record/insert% field r content,
 
     remove
       | doc m%"
@@ -978,7 +978,7 @@
             { bar = "bar }
           ```
         "%
-      = fun field r => %record_remove% field r,
+      = fun field r => %record/remove% field r,
 
     update
       | doc m%"
@@ -1010,12 +1010,12 @@
         "%
       = fun field content r =>
         let r =
-          if %has_field% field r then
-            %record_remove% field r
+          if %record/has_field% field r then
+            %record/remove% field r
           else
             r
         in
-        %record_insert% field r content,
+        %record/insert% field r content,
 
     map_values
       | doc m%"
@@ -1069,7 +1069,7 @@
       "%
       = fun bindings =>
         bindings
-        |> std.array.fold_left (fun accum { field, value } => %record_insert% "%{field}" accum value) {},
+        |> std.array.fold_left (fun accum { field, value } => %record/insert% "%{field}" accum value) {},
 
     is_empty
       | doc m%"
@@ -1149,13 +1149,13 @@
         ```
       "%
       = fun sep fragments =>
-        let length = %length% fragments in
+        let length = %array/length% fragments in
         if length == 0 then
           ""
         else
-          let first = %elem_at% fragments 0 in
+          let first = %array/at% fragments 0 in
           let rest =
-            %array_slice% 1 length fragments
+            %array/slice% 1 length fragments
             |> std.array.fold_left (fun acc s => acc ++ sep ++ s) ""
           in
           first ++ rest,
@@ -1176,7 +1176,7 @@
           => [ "1,2,3" ]
         ```
       "%
-      = fun sep s => %str_split% s sep,
+      = fun sep s => %string/split% s sep,
 
     trim
       | doc m%"
@@ -1191,7 +1191,7 @@
           => "1   2   3"
         ```
       "%
-      = fun s => %str_trim% s,
+      = fun s => %string/trim% s,
 
     characters
       | doc m%"
@@ -1204,7 +1204,7 @@
           => [ "H", "e", "l", "l", "o" ]
         ```
       "%
-      = fun s => %str_chars% s,
+      = fun s => %string/chars% s,
 
     uppercase
       | doc m%"
@@ -1222,7 +1222,7 @@
           => "HELLO.WORLD"
         ```
       "%
-      = fun s => %str_uppercase% s,
+      = fun s => %string/uppercase% s,
 
     lowercase
       | doc m%"
@@ -1241,7 +1241,7 @@
           => "hello.world"
         ```
       "%
-      = fun s => %str_lowercase% s,
+      = fun s => %string/lowercase% s,
 
     contains
       | doc m%"
@@ -1261,7 +1261,7 @@
           => false
         ```
       "%
-      = fun subs s => %str_contains% s subs,
+      = fun subs s => %string/contains% s subs,
 
     replace
       | doc m%"
@@ -1280,7 +1280,7 @@
         ```
       "%
       = fun pattern replace s =>
-        %str_replace% s pattern replace,
+        %string/replace% s pattern replace,
 
     replace_regex
       | doc m%"
@@ -1301,7 +1301,7 @@
       ```
       "%
       = fun pattern replace s =>
-        %str_replace_regex% s pattern replace,
+        %string/replace_regex% s pattern replace,
 
     is_match
       | doc m%"
@@ -1354,7 +1354,7 @@
           => true
         ```
       "%
-      = fun regex => %str_is_match% regex,
+      = fun regex => %string/is_match% regex,
 
     find
       | doc m%"
@@ -1386,7 +1386,7 @@
         regular expression will only be compiled once (see the documentation of
         `std.string.is_match` for more details).
       "%
-      = fun regex => %str_find% regex,
+      = fun regex => %string/find% regex,
 
     length
       | doc m%"
@@ -1413,7 +1413,7 @@
           => 1
         ```
       "%
-      = fun s => %str_length% s,
+      = fun s => %string/length% s,
 
     substring
       | doc m%"
@@ -1438,7 +1438,7 @@
           error
         ```
       "%
-      = fun start end s => %str_substr% s start end,
+      = fun start end s => %string/substr% s start end,
 
     from
       | doc m%"
@@ -1458,7 +1458,7 @@
           => error
         ```
       "%
-      = fun x => %to_str% x,
+      = fun x => %to_string% x,
 
     from_number
       | doc m%"
@@ -1510,7 +1510,7 @@
           => 123
         ```
       "%
-      = fun s => %num_from_str% s,
+      = fun s => %number/from_string% s,
 
     to_bool
       | doc m%"
@@ -1542,7 +1542,7 @@
           => '"hey,there!"
         ```
       "%
-      = fun s => %enum_from_str% s,
+      = fun s => %enum/from_string% s,
   },
 
   is_number
@@ -1772,7 +1772,7 @@
         "null"
       ```
     "%
-    = fun x => %to_str% x,
+    = fun x => %to_string% x,
 
   trace
     | doc m%"
